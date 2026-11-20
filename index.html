@@ -1,0 +1,817 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>U-M LSA Michigan Community College Transfer Plan Builder</title>
+  <style>
+    /* ==========================================================================
+       U-M Brand Variables & WCAG 2.1 AA Compliant Contrast Tokens
+       ========================================================================== */
+    :root {
+      --um-blue: #00274c;        /* Primary Michigan Blue (15:1 contrast on white) */
+      --um-blue-hover: #001a33;
+      --um-maize: #ffcb05;       /* Primary Michigan Maize (9.8:1 contrast with #00274C) */
+      --um-arboretum: #2f65a7;   /* Accessible link blue (6.1:1 contrast on white) */
+      --um-teal-bg: #e6f4f3;
+      --um-teal-border: #007a73;
+      --um-warn-bg: #fff8dc;
+      --um-warn-border: #9a3324; /* U-M Tappan Red for high-contrast alerts */
+      --text-primary: #131516;
+      --text-secondary: #4a5056;
+      --bg-page: #f5f7f9;
+      --bg-surface: #ffffff;
+      --border-subtle: #cfd6dd;
+      --focus-ring: #00274c;
+      --radius: 6px;
+      --shadow-sm: 0 2px 6px rgba(0, 39, 76, 0.08);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: var(--text-primary);
+      background-color: var(--bg-page);
+    }
+
+    /* Skip Link for Keyboard / Screen Reader Users */
+    .skip-link {
+      position: absolute;
+      top: -100px;
+      left: 1rem;
+      background: var(--um-maize);
+      color: var(--um-blue);
+      font-weight: 700;
+      padding: 0.75rem 1.25rem;
+      border-radius: var(--radius);
+      text-decoration: none;
+      z-index: 1000;
+      border: 2px solid var(--um-blue);
+    }
+    .skip-link:focus {
+      top: 1rem;
+    }
+
+    /* Header Banner */
+    header {
+      background-color: var(--um-blue);
+      color: #ffffff;
+      border-bottom: 5px solid var(--um-maize);
+      padding: 1.75rem 1.25rem;
+    }
+
+    .container {
+      max-width: 1040px;
+      margin: 0 auto;
+    }
+
+    .eyebrow {
+      display: inline-block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--um-maize);
+      margin-bottom: 0.35rem;
+    }
+
+    h1 {
+      margin: 0 0 0.5rem 0;
+      font-size: 1.85rem;
+      line-height: 1.25;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 72ch;
+      color: #e8eef5;
+      font-size: 1.02rem;
+    }
+
+    main {
+      padding: 1.75rem 1.25rem 3rem;
+    }
+
+    /* Selection Control Panel */
+    .selector-panel {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-top: 4px solid var(--um-blue);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      box-shadow: var(--shadow-sm);
+      margin-bottom: 1.75rem;
+    }
+
+    .selector-panel h2 {
+      margin-top: 0;
+      margin-bottom: 1rem;
+      font-size: 1.25rem;
+      color: var(--um-blue);
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1.25rem;
+      align-items: end;
+    }
+
+    .field-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      color: var(--um-blue);
+      font-size: 0.98rem;
+    }
+
+    .field-hint {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+      margin-bottom: 0.45rem;
+    }
+
+    select {
+      appearance: none;
+      width: 100%;
+      padding: 0.7rem 2.5rem 0.7rem 0.85rem;
+      font-size: 1rem;
+      color: var(--text-primary);
+      background-color: #ffffff;
+      border: 2px solid #6b7280;
+      border-radius: var(--radius);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2300274C' viewBox='0 0 16 16'%3E%3Cpath d='M1.5 5.5l6.5 6.5 6.5-6.5H1.5z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 0.85rem center;
+      cursor: pointer;
+    }
+
+    select:focus, button:focus, a:focus {
+      outline: 3px solid var(--focus-ring);
+      outline-offset: 2px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 0.75rem;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background-color: var(--um-blue);
+      color: #ffffff;
+      border: 2px solid var(--um-blue);
+      padding: 0.7rem 1.25rem;
+      font-size: 1rem;
+      font-weight: 700;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .btn-primary:hover {
+      background-color: var(--um-blue-hover);
+    }
+
+    .btn-secondary {
+      background-color: #ffffff;
+      color: var(--um-blue);
+      border: 2px solid var(--um-blue);
+      padding: 0.7rem 1.1rem;
+      font-size: 0.95rem;
+      font-weight: 700;
+      border-radius: var(--radius);
+      cursor: pointer;
+    }
+    .btn-secondary:hover {
+      background-color: #eef3f8;
+    }
+
+    /* Screen Reader Live Status Region */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* Empty / Initial State */
+    .empty-state {
+      background: var(--bg-surface);
+      border: 2px dashed var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 2.25rem 1.5rem;
+      text-align: center;
+      color: var(--text-secondary);
+    }
+
+    /* Results Layout */
+    .results-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      flex-wrap: wrap;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 2px solid var(--um-blue);
+    }
+
+    .results-header h2 {
+      margin: 0;
+      color: var(--um-blue);
+      font-size: 1.5rem;
+    }
+
+    .meta-badge {
+      display: inline-block;
+      background: var(--um-maize);
+      color: var(--um-blue);
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 0.25rem 0.65rem;
+      border-radius: 4px;
+      margin-top: 0.35rem;
+    }
+
+    /* Callout Alerts */
+    .callout {
+      border-left: 5px solid var(--um-blue);
+      background: #eef4fa;
+      padding: 1rem 1.25rem;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin-bottom: 1.5rem;
+    }
+
+    .callout-warning {
+      border-left-color: var(--um-warn-border);
+      background: var(--um-warn-bg);
+    }
+
+    .callout h3 {
+      margin: 0 0 0.35rem 0;
+      font-size: 1.05rem;
+      color: var(--text-primary);
+    }
+
+    .callout p {
+      margin: 0;
+      font-size: 0.95rem;
+    }
+
+    /* Cards & Tables */
+    .section-card {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .section-card h3 {
+      margin-top: 0;
+      margin-bottom: 0.75rem;
+      color: var(--um-blue);
+      font-size: 1.25rem;
+      border-bottom: 1px solid var(--border-subtle);
+      padding-bottom: 0.5rem;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    caption {
+      text-align: left;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+
+    th, td {
+      text-align: left;
+      padding: 0.75rem 0.85rem;
+      border-bottom: 1px solid var(--border-subtle);
+      vertical-align: top;
+    }
+
+    th {
+      background-color: #f0f4f8;
+      color: var(--um-blue);
+      font-weight: 700;
+    }
+
+    .course-pill {
+      display: inline-block;
+      background: #eef3f8;
+      border: 1px solid #b8c7d9;
+      color: var(--um-blue);
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.88rem;
+      font-weight: 600;
+      padding: 0.15rem 0.45rem;
+      border-radius: 4px;
+      margin: 0.1rem 0.25rem 0.1rem 0;
+    }
+
+    .status-um-only {
+      display: inline-block;
+      background: #f3f4f6;
+      color: #374151;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      border: 1px solid #d1d5db;
+    }
+
+    .dist-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .dist-box {
+      border: 1px solid var(--border-subtle);
+      border-radius: var(--radius);
+      padding: 1rem;
+      background: #fafbfc;
+    }
+
+    .dist-box h4 {
+      margin: 0 0 0.4rem 0;
+      color: var(--um-blue);
+      font-size: 1.05rem;
+    }
+
+    .dist-box p {
+      margin: 0.35rem 0;
+      font-size: 0.92rem;
+    }
+
+    footer {
+      max-width: 1040px;
+      margin: 0 auto;
+      padding: 0 1.25rem 2.5rem;
+      font-size: 0.88rem;
+      color: var(--text-secondary);
+    }
+
+    /* Print Stylesheet for Students/Advisors */
+    @media print {
+      body { background: #ffffff; }
+      .selector-panel, .button-row, .skip-link { display: none; }
+      .section-card { box-shadow: none; border: 1px solid #999; break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#main-content" class="skip-link">Skip to transfer plan selector</a>
+
+  <header>
+    <div class="container">
+      <span class="eyebrow">University of Michigan &bull; College of Literature, Science, and the Arts</span>
+      <h1>Michigan Community College Transfer Plan Builder</h1>
+      <p class="subtitle">
+        Select your Michigan community college and intended U-M LSA major to view combined General Degree Requirements and major-specific prerequisite equivalencies.
+      </p>
+    </div>
+  </header>
+
+  <main id="main-content" class="container">
+    <!-- Selection Controls -->
+    <section class="selector-panel" aria-labelledby="selector-heading">
+      <h2 id="selector-heading">Build Your Custom Transfer Guide</h2>
+      <form id="transfer-form" novalidate>
+        <div class="form-grid">
+          <div class="field-group">
+            <label for="college-select">1. Michigan Community College</label>
+            <span id="college-hint" class="field-hint">Choose your current or previous institution</span>
+            <select id="college-select" aria-describedby="college-hint">
+              <option value="">-- Select a Community College --</option>
+            </select>
+          </div>
+
+          <div class="field-group">
+            <label for="major-select">2. Intended U-M LSA Major</label>
+            <span id="major-hint" class="field-hint">Choose a major or select Undecided</span>
+            <select id="major-select" aria-describedby="major-hint">
+              <option value="">-- Select an LSA Major --</option>
+            </select>
+          </div>
+
+          <div class="button-row">
+            <button type="submit" class="btn-primary">View Transfer Plan</button>
+            <button type="button" id="reset-btn" class="btn-secondary">Reset</button>
+          </div>
+        </div>
+      </form>
+    </section>
+
+    <!-- Live Region for Screen Reader Announcements -->
+    <div id="live-announcer" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+
+    <!-- Dynamic Output Container -->
+    <section id="results-container" aria-label="Transfer Plan Results" tabindex="-1">
+      <div class="empty-state">
+        <p><strong>No transfer plan generated yet.</strong></p>
+        <p>Select a Michigan Community College and an LSA Major above to display your customized requirements.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <p>
+      <strong>Disclaimer:</strong> Articulations are subject to change at the end of each semester. Always verify course transferability for your specific term in the official
+      <a href="https://transfercredit.ugadmiss.umich.edu/" style="color: var(--um-arboretum);">U-M Transfer Credit Equivalency (TCE) Database</a>
+      and consult an LSA academic advisor prior to registration.
+    </p>
+  </footer>
+
+  <script>
+    /**
+     * ============================================================================
+     * RELATIONAL JSON DATA STORE
+     * Maintain colleges and majors independently to eliminate duplicate entries.
+     * ============================================================================
+     */
+    const transferDatabase = {
+      colleges: {
+        bay: {
+          name: "Bay de Noc Community College (Bay College)",
+          lastVerified: "May 1, 2025",
+          generalRequirements: {
+            fywr: "Complete both ENGL 101 and ENGL 102",
+            qr: "Complete one of: MATH 142, 210, 243; or PHYS 201, 202, 205, 206",
+            language: "4th-term proficiency required. No 4th-semester equivalents currently approved at Bay; you may begin sequences with FREN 111–112, GRMN 101–102, or SPAN 101, 102, 220 (placement exam required at U-M)."
+          },
+          distributionPart1: {
+            HU: ["ARTS 163, 204, 207", "COMM 225", "ENGL 150, 200, 203, 205, 210, 211, 260, 280–282", "MUSC 151, 153, 153H, 154, 220", "PHIL 201, 202, 204, 230", "WGST 200"],
+            NS: ["BIOL 103, 104, 107, 108, 110, 112, 202, 225, 226, 255, 256, 270, 271, 276", "CHEM 103, 107, 108, 110, 112, 201, 202", "GEOG 110", "PHYS 103, 104, 201, 202, 205, 206, 260, 261"],
+            SS: ["ANTH 201, 201H", "COMM 120, 201", "ECON 131, 132", "HIST 101, 102, 211, 212, 220, 224, 228", "POLI 110, 111, 201, 262, 272", "PSYC 201, 206, 210, 220, 280", "SOCY 103, 151, 205–208"]
+          },
+          distributionPart2: {
+            MSA: "MATH 141, 142, 210, 243, 244, 250",
+            CE: "ARTS 101, 115, 117, 118, 120, 130, 175, 215, 217, 218, 220; ENGL 208, 209; MUSC 109–112, 141",
+            ID: "No classes currently approved"
+          },
+          /* Maps U-M course codes -> Bay College equivalent course(s) */
+          courseEquivalencies: {
+            "ECON 101": "ECON 132 (Principles of Microeconomics)",
+            "ECON 102": "ECON 131 (Principles of Macroeconomics)",
+            "MATH 115": "MATH 141 (Calculus I)",
+            "MATH 116": "MATH 142 (Calculus II)",
+            "PSYCH 111": "PSYC 201 (Introduction to Psychology)",
+            "STATS 250": "MATH 210 (Introduction to Statistics)",
+            "BIOLOGY 171": "BIOL 112 (General Biology II)",
+            "BIOLOGY 172": "BIOL 110 (General Biology I)",
+            "CHEM 130": "CHEM 107 (General Chemistry I)"
+          }
+        },
+        occ: {
+          name: "Oakland Community College (OCC)",
+          lastVerified: "May 1, 2025",
+          generalRequirements: {
+            fywr: "Complete ENG 1510 and ENG 1520 (verify specific sequence in TCE)",
+            qr: "Complete one of: MAT 1580, 1730, 1740; or PHY 1610, 1620, 2400, 2500",
+            language: "4th-term proficiency can be completed at OCC via 4 semesters of French (FRE 1510, 1530, 2610, 2620) or Spanish (SPA 1510, 1530, 2610, 2620). ASL, Arabic, German, Italian, and Japanese also transfer with a U-M placement exam."
+          },
+          distributionPart1: {
+            HU: ["FSH 1500", "HIS 1510, 1520", "HUM 1510, 1520", "PHI 1510, 1610, 1710", "ENG 1610, 1710, 2510, 2520"],
+            NS: ["BIO 1511, 1530, 1560", "CHE 1510, 1520", "PHY 1610, 1620, 2400, 2500"],
+            SS: ["ANT 1540", "ECO 2610, 2620", "HIS 2510, 2520", "POL 1510", "PSY 2510", "SOC 2510"]
+          },
+          distributionPart2: {
+            MSA: "MAT 1540, 1580, 1600, 1730, 1740, 2740, 2810, 2880",
+            CE: "ART 1510–1550, 1570, 1600, 1610, 2270, 2510, 2520, 2570, 2630; ENG 2800",
+            ID: "No classes currently approved"
+          },
+          courseEquivalencies: {
+            "ECON 101": "ECO 2620 (Principles of Microeconomics)",
+            "ECON 102": "ECO 2610 (Principles of Macroeconomics)",
+            "MATH 115": "MAT 1730 (Calculus I)",
+            "MATH 116": "MAT 1740 (Calculus II)",
+            "PSYCH 111": "PSY 2510 (Introduction to Psychology)",
+            "STATS 250": "MAT 1580 (Statistics)",
+            "BIOLOGY 171": "BIO 1560 (General Biology II)",
+            "BIOLOGY 172": "BIO 1530 (General Biology I)",
+            "CHEM 130": "CHE 1510 (General Chemistry I)"
+          }
+        },
+        wcc: {
+          name: "Washtenaw Community College (WCC)",
+          lastVerified: "May 1, 2025",
+          generalRequirements: {
+            fywr: "Complete ENG 111 and ENG 226",
+            qr: "Complete one of: MTH 160, 176, 180, 191, 192; or PHY 111, 211",
+            language: "4th-term proficiency can be completed at WCC in French, German, or Spanish through the 202 level."
+          },
+          distributionPart1: {
+            HU: ["ART 130, 131", "ENG 160, 170, 200, 212, 213", "HUM 101, 102", "MUS 180", "PHL 101, 205"],
+            NS: ["BIO 101, 102, 161, 162", "CEM 111, 122", "GLG 100", "PHY 111, 122, 211, 222"],
+            SS: ["ANT 201", "ECO 211, 222", "HST 121, 122, 201, 202", "PLS 112", "PSY 100", "SOC 100"]
+          },
+          distributionPart2: {
+            MSA: "MTH 160, 176, 180, 191, 192, 197, 293, 295",
+            CE: "ART 101, 102, 111, 112; DAN 180; DRA 152; ENG 270, 271",
+            ID: "No classes currently approved"
+          },
+          courseEquivalencies: {
+            "ECON 101": "ECO 222 (Principles of Microeconomics)",
+            "ECON 102": "ECO 211 (Principles of Macroeconomics)",
+            "MATH 115": "MTH 191 (Calculus I)",
+            "MATH 116": "MTH 192 (Calculus II)",
+            "PSYCH 111": "PSY 100 (Introduction to Psychology)",
+            "STATS 250": "MTH 160 (Basic Statistics)",
+            "BIOLOGY 171": "BIO 161 (General Biology I: Ecology & Evolution)",
+            "BIOLOGY 172": "BIO 162 (General Biology II: Cell & Molecular)",
+            "CHEM 130": "CEM 111 (General Chemistry I)"
+          }
+        }
+      },
+
+      majors: {
+        undecided: {
+          name: "Undecided / General LSA Exploration",
+          degreeType: "B.A. or B.S.",
+          excludedDistArea: null,
+          advisingNote: "Focus on completing First-Year Writing (FYWR), Quantitative Reasoning (QR), and 7 credits each in Humanities (HU), Natural Science (NS), and Social Science (SS).",
+          prerequisites: []
+        },
+        economics: {
+          name: "Economics (B.A. or B.S.)",
+          degreeType: "B.A. or B.S.",
+          excludedDistArea: "Social Science (SS)",
+          advisingNote: "Because Economics is a Social Science department, ECON courses cannot count toward your 7-credit Social Science (SS) distribution requirement. However, MATH 115 fulfills both QR and MSA!",
+          prerequisites: [
+            { umCourse: "ECON 101", title: "Principles of Economics I (Micro)", notes: "Must earn C or better" },
+            { umCourse: "ECON 102", title: "Principles of Economics II (Macro)", notes: "Must earn C or better" },
+            { umCourse: "MATH 115", title: "Calculus I", notes: "Must earn C or better; also satisfies LSA QR" }
+          ]
+        },
+        psychology: {
+          name: "Psychology (B.A. or B.S.)",
+          degreeType: "B.A. or B.S.",
+          excludedDistArea: "Social Science (SS)",
+          advisingNote: "Psychology courses cannot fulfill your Social Science (SS) distribution requirement. Completing introductory statistics before transferring is strongly recommended.",
+          prerequisites: [
+            { umCourse: "PSYCH 111", title: "Introduction to Psychology", notes: "Required prerequisite to declare" },
+            { umCourse: "STATS 250", title: "Introduction to Statistics and Data Analysis", notes: "Also satisfies LSA QR" }
+          ]
+        },
+        biology: {
+          name: "Biology (B.S.)",
+          degreeType: "B.S.",
+          excludedDistArea: "Natural Science (NS)",
+          advisingNote: "Biology courses cannot count toward your 7-credit Natural Science (NS) distribution requirement, though Chemistry and Math prerequisites can count toward NS and MSA/QR.",
+          prerequisites: [
+            { umCourse: "BIOLOGY 171", title: "Introductory Biology: Ecology and Evolution", notes: "Part of intro biology sequence" },
+            { umCourse: "BIOLOGY 172", title: "Introductory Biology: Molecular, Cellular, and Developmental", notes: "Part of intro biology sequence" },
+            { umCourse: "CHEM 130", title: "General Chemistry: Macroscopic Investigations", notes: "Counts toward NS distribution" },
+            { umCourse: "MATH 115", title: "Calculus I", notes: "Counts toward QR and MSA" }
+          ]
+        }
+      }
+    };
+
+    /**
+     * ============================================================================
+     * INITIALIZE DROPDOWNS & EVENT HANDLERS
+     * ============================================================================
+     */
+    const collegeSelect = document.getElementById("college-select");
+    const majorSelect = document.getElementById("major-select");
+    const form = document.getElementById("transfer-form");
+    const resetBtn = document.getElementById("reset-btn");
+    const resultsContainer = document.getElementById("results-container");
+    const liveAnnouncer = document.getElementById("live-announcer");
+
+    function populateDropdowns() {
+      Object.entries(transferDatabase.colleges).forEach(([id, college]) => {
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = college.name;
+        collegeSelect.appendChild(option);
+      });
+
+      Object.entries(transferDatabase.majors).forEach(([id, major]) => {
+        const option = document.createElement("option");
+        option.value = id;
+        option.textContent = major.name;
+        majorSelect.appendChild(option);
+      });
+    }
+
+    function renderCoursePills(courseArray) {
+      return courseArray.map(c => `<span class="course-pill">${c}</span>`).join(" ");
+    }
+
+    function renderTransferPlan(collegeId, majorId) {
+      const college = transferDatabase.colleges[collegeId];
+      const major = transferDatabase.majors[majorId];
+
+      // Build Major Prerequisites Rows
+      let majorSectionHTML = "";
+      if (major.prerequisites.length === 0) {
+        majorSectionHTML = `<p>${major.advisingNote}</p>`;
+      } else {
+        const rows = major.prerequisites.map(prereq => {
+          const ccMatch = college.courseEquivalencies[prereq.umCourse]
+            ? `<span class="course-pill">${college.courseEquivalencies[prereq.umCourse]}</span>`
+            : `<span class="status-um-only">Check TCE / Take at U-M</span>`;
+
+          return `
+            <tr>
+              <th scope="row">${prereq.umCourse}: ${prereq.title}</th>
+              <td>${ccMatch}</td>
+              <td>${prereq.notes}</td>
+            </tr>
+          `;
+        }).join("");
+
+        majorSectionHTML = `
+          <p>${major.advisingNote}</p>
+          <div class="table-wrapper">
+            <table>
+              <caption>Major Prerequisite Equivalencies from ${college.name}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">U-M LSA Prerequisite</th>
+                  <th scope="col">${college.name} Equivalent</th>
+                  <th scope="col">Advising Notes</th>
+                </tr>
+              </thead>
+              <tbody>${rows}</tbody>
+            </table>
+          </div>
+        `;
+      }
+
+      // Build Distribution Exclusion Warning if applicable
+      const exclusionAlertHTML = major.excludedDistArea
+        ? `
+          <div class="callout callout-warning" role="region" aria-label="Major Distribution Rule">
+            <h3>Important Rule for ${major.name} Majors</h3>
+            <p>Courses that transfer into your major's department <strong>cannot</strong> be used to satisfy your <strong>${major.excludedDistArea}</strong> Area Distribution requirement. You must fulfill ${major.excludedDistArea} using courses from other departments.</p>
+          </div>
+        `
+        : "";
+
+      resultsContainer.innerHTML = `
+        <div class="results-header">
+          <div>
+            <h2>Transfer Plan: ${college.name} &rarr; ${major.name}</h2>
+            <span class="meta-badge">Guide Verified: ${college.lastVerified}</span>
+          </div>
+          <button type="button" class="btn-secondary" onclick="window.print()">Print / Save PDF</button>
+        </div>
+
+        ${exclusionAlertHTML}
+
+        <!-- Part 1: Major-Specific Prerequisites -->
+        <article class="section-card" aria-labelledby="major-req-heading">
+          <h3 id="major-req-heading">1. Major Prerequisites (${major.name})</h3>
+          ${majorSectionHTML}
+        </article>
+
+        <!-- Part 2: LSA General Skills & Language Requirements -->
+        <article class="section-card" aria-labelledby="skills-req-heading">
+          <h3 id="skills-req-heading">2. LSA Skills &amp; Language Requirements</h3>
+          <div class="table-wrapper">
+            <table>
+              <caption>Core LSA Graduation Requirements</caption>
+              <thead>
+                <tr>
+                  <th scope="col">LSA Requirement</th>
+                  <th scope="col">How to Fulfill at ${college.name}</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <th scope="row">First-Year Writing (FYWR)</th>
+                  <td>${college.generalRequirements.fywr}</td>
+                </tr>
+                <tr>
+                  <th scope="row">Upper-Level Writing (ULWR)</th>
+                  <td><span class="status-um-only">Must take at U-M</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Race &amp; Ethnicity (RE)</th>
+                  <td><span class="status-um-only">Must take at U-M</span></td>
+                </tr>
+                <tr>
+                  <th scope="row">Quantitative Reasoning (QR)</th>
+                  <td>${college.generalRequirements.qr}</td>
+                </tr>
+                <tr>
+                  <th scope="row">4th-Term Language Proficiency</th>
+                  <td>${college.generalRequirements.language}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </article>
+
+        <!-- Part 3: Area Distribution Requirements -->
+        <article class="section-card" aria-labelledby="dist-req-heading">
+          <h3 id="dist-req-heading">3. Area Distribution Requirements (30 Credits Total)</h3>
+          <p><strong>Part I (21 Credits):</strong> Complete 7 credits in each of the three core areas below (Humanities, Natural Science, Social Science).</p>
+          <div class="dist-grid">
+            <div class="dist-box">
+              <h4>Humanities (HU) — 7 Credits</h4>
+              <p>${renderCoursePills(college.distributionPart1.HU)}</p>
+            </div>
+            <div class="dist-box">
+              <h4>Natural Science (NS) — 7 Credits</h4>
+              <p>${renderCoursePills(college.distributionPart1.NS)}</p>
+            </div>
+            <div class="dist-box">
+              <h4>Social Science (SS) — 7 Credits</h4>
+              <p>${renderCoursePills(college.distributionPart1.SS)}</p>
+            </div>
+          </div>
+
+          <p style="margin-top: 1.25rem;"><strong>Part II (9 Credits):</strong> Complete 3 additional credits in <strong>three</strong> of the following areas (additional HU, NS, or SS courses from above also count):</p>
+          <div class="dist-grid">
+            <div class="dist-box">
+              <h4>Mathematical &amp; Symbolic Analysis (MSA)</h4>
+              <p>${college.distributionPart2.MSA}</p>
+            </div>
+            <div class="dist-box">
+              <h4>Creative Expression (CE)</h4>
+              <p>${college.distributionPart2.CE}</p>
+            </div>
+            <div class="dist-box">
+              <h4>Interdisciplinary (ID)</h4>
+              <p>${college.distributionPart2.ID}</p>
+            </div>
+          </div>
+        </article>
+      `;
+
+      // Announce update to screen readers and move focus cleanly
+      liveAnnouncer.textContent = `Updated transfer plan for ${college.name} and ${major.name}.`;
+      resultsContainer.focus();
+    }
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const collegeId = collegeSelect.value;
+      const majorId = majorSelect.value;
+
+      if (!collegeId || !majorId) {
+        liveAnnouncer.textContent = "Please select both a Michigan community college and an LSA major.";
+        resultsContainer.innerHTML = `
+          <div class="callout callout-warning" role="alert">
+            <h3>Selection Required</h3>
+            <p>Please choose both a <strong>Michigan Community College</strong> and an <strong>Intended U-M LSA Major</strong> to generate your transfer guide.</p>
+          </div>
+        `;
+        if (!collegeId) collegeSelect.focus();
+        else majorSelect.focus();
+        return;
+      }
+
+      renderTransferPlan(collegeId, majorId);
+    });
+
+    resetBtn.addEventListener("click", () => {
+      collegeSelect.value = "";
+      majorSelect.value = "";
+      resultsContainer.innerHTML = `
+        <div class="empty-state">
+          <p><strong>Selections cleared.</strong></p>
+          <p>Select a Michigan Community College and an LSA Major above to display your customized requirements.</p>
+        </div>
+      `;
+      liveAnnouncer.textContent = "Form reset. Selections cleared.";
+      collegeSelect.focus();
+    });
+
+    populateDropdowns();
+  </script>
+</body>
+</html>
